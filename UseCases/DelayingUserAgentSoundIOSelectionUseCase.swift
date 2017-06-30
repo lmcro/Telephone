@@ -2,8 +2,8 @@
 //  DelayingUserAgentSoundIOSelectionUseCase.swift
 //  Telephone
 //
-//  Copyright (c) 2008-2016 Alexey Kuznetsov
-//  Copyright (c) 2016 64 Characters
+//  Copyright © 2008-2016 Alexey Kuznetsov
+//  Copyright © 2016-2017 64 Characters
 //
 //  Telephone is free software: you can redistribute it and/or modify
 //  it under the terms of the GNU General Public License as published by
@@ -19,7 +19,7 @@
 public final class DelayingUserAgentSoundIOSelectionUseCase {
     fileprivate let useCase: ThrowingUseCase
     fileprivate let userAgent: UserAgent
-    fileprivate var selection: ThrowingUseCase = NullThrowingUseCase()
+    fileprivate var selection: ThrowingUseCase?
 
     public init(useCase: ThrowingUseCase, userAgent: UserAgent) {
         self.useCase = useCase
@@ -48,29 +48,29 @@ extension DelayingUserAgentSoundIOSelectionUseCase: UseCase {
     }
 
     private func selectSoundIO() throws {
-        try selection.execute()
-        selection = NullThrowingUseCase()
+        try selection?.execute()
+        selection = nil
     }
 }
 
 extension DelayingUserAgentSoundIOSelectionUseCase: UserAgentEventTarget {
-    public func userAgentDidFinishStarting(_ userAgent: UserAgent) {
+    public func didFinishStarting(_ agent: UserAgent) {
         execute()
     }
 
-    public func userAgentDidFinishStopping(_ userAgent: UserAgent) {
-        selection = NullThrowingUseCase()
+    public func didFinishStopping(_ agent: UserAgent) {
+        selection = nil
     }
 
-    public func userAgentDidMakeCall(_ userAgent: UserAgent) {
+    public func didMakeCall(_ agent: UserAgent) {
         selectSoundIOOrLogError()
     }
 
-    public func userAgentDidReceiveCall(_ userAgent: UserAgent) {
+    public func didReceiveCall(_ agent: UserAgent) {
         selectSoundIOOrLogError()
     }
 
-    public func userAgentDidDetectNAT(_ userAgent: UserAgent) {}
+    public func didDetectNAT(_ agent: UserAgent) {}
 }
 
 extension DelayingUserAgentSoundIOSelectionUseCase: SystemAudioDevicesChangeEventTarget {

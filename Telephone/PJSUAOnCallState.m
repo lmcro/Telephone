@@ -2,8 +2,8 @@
 //  PJSUAOnCallState.m
 //  Telephone
 //
-//  Copyright (c) 2008-2016 Alexey Kuznetsov
-//  Copyright (c) 2016 64 Characters
+//  Copyright © 2008-2016 Alexey Kuznetsov
+//  Copyright © 2016-2017 64 Characters
 //
 //  Telephone is free software: you can redistribute it and/or modify
 //  it under the terms of the GNU General Public License as published by
@@ -84,6 +84,7 @@ void PJSUAOnCallState(pjsua_call_id callID, pjsip_event *event) {
     NSString *stateText = [NSString stringWithPJString:callInfo.state_text];
     NSInteger lastStatus = callInfo.last_status;
     NSString *lastStatusText = [NSString stringWithPJString:callInfo.last_status_text];
+    NSInteger duration = callInfo.connect_duration.sec;
 
     dispatch_async(dispatch_get_main_queue(), ^{
         AKSIPUserAgent *userAgent = [AKSIPUserAgent sharedUserAgent];
@@ -112,6 +113,7 @@ void PJSUAOnCallState(pjsua_call_id callID, pjsip_event *event) {
         call.stateText = stateText;
         call.lastStatus = lastStatus;
         call.lastStatusText = lastStatusText;
+        call.duration = duration;
 
         if (state == kAKSIPCallDisconnectedState) {
             [userAgent stopRingbackForCall:call];

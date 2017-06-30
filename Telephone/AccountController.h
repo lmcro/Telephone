@@ -2,8 +2,8 @@
 //  AccountController.h
 //  Telephone
 //
-//  Copyright (c) 2008-2016 Alexey Kuznetsov
-//  Copyright (c) 2016 64 Characters
+//  Copyright © 2008-2016 Alexey Kuznetsov
+//  Copyright © 2016-2017 64 Characters
 //
 //  Telephone is free software: you can redistribute it and/or modify
 //  it under the terms of the GNU General Public License as published by
@@ -27,8 +27,8 @@
 extern NSString * const kEmailSIPLabel;
 
 @class AKSIPURI, AKNetworkReachability;
-@class ActiveAccountViewController, AuthenticationFailureController;
-@class CallTransferController;
+@class AsyncCallHistoryViewEventTargetFactory, AuthenticationFailureController;
+@class CallTransferController, WorkspaceSleepStatus;
 @protocol MusicPlayer, RingtonePlaybackUseCase;
 
 // A SIP account controller.
@@ -41,6 +41,8 @@ extern NSString * const kEmailSIPLabel;
 @property(nonatomic, readonly) AKSIPUserAgent *userAgent;
 @property(nonatomic, readonly) id<RingtonePlaybackUseCase> ringtonePlayback;
 @property(nonatomic, readonly) id<MusicPlayer> musicPlayer;
+@property(nonatomic, readonly) WorkspaceSleepStatus *sleepStatus;
+@property(nonatomic, readonly) AsyncCallHistoryViewEventTargetFactory *factory;
 
 // A Boolean value indicating whether account is registered.
 @property(nonatomic, readonly, getter=isAccountRegistered) BOOL accountRegistered;
@@ -74,20 +76,21 @@ extern NSString * const kEmailSIPLabel;
 // A replacement for the plus character in the phone number.
 @property(nonatomic, copy) NSString *plusCharacterSubstitution;
 
-// An active account view controller.
-@property(nonatomic, readonly) ActiveAccountViewController *activeAccountViewController;
-
 // An authentication failure controller.
 @property(nonatomic, readonly) AuthenticationFailureController *authenticationFailureController;
 
 // A Boolean value indicating if call windows should display account name.
 @property(nonatomic, assign) BOOL callsShouldDisplayAccountInfo;
 
+@property(nonatomic, readonly) BOOL canMakeCalls;
+
 
 - (instancetype)initWithSIPAccount:(AKSIPAccount *)account
                          userAgent:(AKSIPUserAgent *)userAgent
                   ringtonePlayback:(id<RingtonePlaybackUseCase>)ringtonePlayback
-                       musicPlayer:(id<MusicPlayer>)musicPlayer;
+                       musicPlayer:(id<MusicPlayer>)musicPlayer
+                       sleepStatus:(WorkspaceSleepStatus *)sleepStatus
+                           factory:(AsyncCallHistoryViewEventTargetFactory *)factory;
 
 // Registers the account adding it to the user agent, if needed. The user agent will be started, if it hasn't been yet.
 - (void)registerAccount;

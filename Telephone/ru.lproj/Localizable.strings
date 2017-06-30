@@ -10,6 +10,9 @@
 /* Call answer button. */
 "Answer" = "Ответить";
 
+/* Call history record removal alert. */
+"Are you sure you want to delete the record “%@”?" = "Вы действительно хотите удалить запись «%@»?";
+
 /* Telephone quit confirmation. */
 "Are you sure you want to quit Telephone?" = "Вы действительно хотите выйти из Телефона?";
 
@@ -53,9 +56,6 @@
 /* Products fetch error. */
 "Could not fetch products." = "Не удалось получить список продуктов.";
 
-/* Address Book plug-ins install error, alert message text. */
-"Could not install Address Book plug-ins." = "Не удалось установить плагины к «Адресной книге».";
-
 /* Product purchase error. */
 "Could not make purchase." = "Покупка не удалась.";
 
@@ -95,9 +95,6 @@
 
 /* Hold. Call menu item. */
 "Hold" = "Поставить на ожидание";
-
-/* Address Book plug-ins install error, alert informative text. */
-"Make sure you have write permission to “%@”." = "Проверьте права на запись в «%@».";
 
 /* Microphone muted status text. */
 "mic muted" = "микрофон выключен";
@@ -170,6 +167,9 @@
 
 /* Error description. */
 "The error was: “%d %@”." = "%2$@, ошибка %1$d.";
+
+/* Call history record removal alert informative text. */
+"This action cannot be undone." = "Удаленная запись не может быть восстановлена.";
 
 /* Account removal confirmation informative text. */
 "This will delete your currently set up account “%@”." = "Настроенный аккаунт «%@» будет удален.";

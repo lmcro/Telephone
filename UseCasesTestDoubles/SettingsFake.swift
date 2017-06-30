@@ -2,8 +2,8 @@
 //  SettingsFake.swift
 //  Telephone
 //
-//  Copyright (c) 2008-2016 Alexey Kuznetsov
-//  Copyright (c) 2016 64 Characters
+//  Copyright © 2008-2016 Alexey Kuznetsov
+//  Copyright © 2016-2017 64 Characters
 //
 //  Telephone is free software: you can redistribute it and/or modify
 //  it under the terms of the GNU General Public License as published by
@@ -55,6 +55,14 @@ extension SettingsFake: KeyValueSettings {
         return dictionary[key] as? Bool ?? false
     }
 
+    @objc public func set(_ value: Int, forKey key: String) {
+        dictionary[key] = value
+    }
+
+    @objc public func integer(forKey key: String) -> Int {
+        return dictionary[key] as? Int ?? 0
+    }
+
     @objc public func set(_ array: [Any], forKey key: String) {
         dictionary[key] = array
     }
@@ -65,8 +73,10 @@ extension SettingsFake: KeyValueSettings {
 
     @objc public func register(defaults: [String : Any]) {
         for (key, value) in defaults {
-            registered.updateValue(value, forKey: key)
-            dictionary.updateValue(value, forKey: key)
+            registered[key] = value
+            if dictionary[key] == nil {
+                dictionary[key] = value
+            }
         }
     }
 }

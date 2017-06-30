@@ -2,8 +2,8 @@
 //  UserDefaultsKeys.m
 //  Telephone
 //
-//  Copyright (c) 2008-2016 Alexey Kuznetsov
-//  Copyright (c) 2016 64 Characters
+//  Copyright © 2008-2016 Alexey Kuznetsov
+//  Copyright © 2016-2017 64 Characters
 //
 //  Telephone is free software: you can redistribute it and/or modify
 //  it under the terms of the GNU General Public License as published by
@@ -22,7 +22,6 @@ NSString * const kAccounts = @"Accounts";
 NSString * const kSTUNServerHost = @"STUNServerHost";
 NSString * const kSTUNServerPort = @"STUNServerPort";
 NSString * const kSTUNDomain = @"STUNDomain";
-NSString * const kLogFileName = @"LogFileName";
 NSString * const kLogLevel = @"LogLevel";
 NSString * const kConsoleLogLevel = @"ConsoleLogLevel";
 NSString * const kVoiceActivityDetection = @"VoiceActivityDetection";
@@ -40,7 +39,9 @@ NSString * const kAutoCloseCallWindow = @"AutoCloseCallWindow";
 NSString * const kAutoCloseMissedCallWindow = @"AutoCloseMissedCallWindow";
 NSString * const kCallWaiting = @"CallWaiting";
 NSString * const kUseG711Only = @"UseG711Only";
+NSString * const kSettingsVersion = @"SettingsVersion";
 
+NSString * const kUUID = @"UUID";
 NSString * const kDescription = @"Description";
 NSString * const kFullName = @"FullName";
 NSString * const kSIPAddress = @"SIPAddress";

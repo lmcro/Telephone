@@ -2,8 +2,8 @@
 //  CallController.m
 //  Telephone
 //
-//  Copyright (c) 2008-2016 Alexey Kuznetsov
-//  Copyright (c) 2016 64 Characters
+//  Copyright © 2008-2016 Alexey Kuznetsov
+//  Copyright © 2016-2017 64 Characters
 //
 //  Telephone is free software: you can redistribute it and/or modify
 //  it under the terms of the GNU General Public License as published by
@@ -21,8 +21,6 @@
 @import UseCases;
 
 #import "AKActiveCallView.h"
-#import "AKNSString+Creating.h"
-#import "AKNSString+Scanning.h"
 #import "AKNSWindow+Resizing.h"
 #import "AKSIPURI.h"
 #import "AKSIPURIFormatter.h"
@@ -117,6 +115,10 @@ static const NSTimeInterval kRedialButtonReenableTime = 1.0;
     return _endedCallViewController;
 }
 
+- (BOOL)isCallUnhandled {
+    return self.call.isMissed;
+}
+
 - (instancetype)initWithWindowNibName:(NSString *)windowNibName
                     accountController:(AccountController *)accountController
                             userAgent:(AKSIPUserAgent *)userAgent
@@ -125,7 +127,7 @@ static const NSTimeInterval kRedialButtonReenableTime = 1.0;
                              delegate:(id<CallControllerDelegate>)delegate {
 
     if ((self = [self initWithWindowNibName:windowNibName])) {
-        _identifier = [NSString ak_uuidString];
+        _identifier = [NSUUID UUID].UUIDString;
         _accountController = accountController;
         _userAgent = userAgent;
         _ringtonePlayback = ringtonePlayback;
@@ -197,17 +199,12 @@ static const NSTimeInterval kRedialButtonReenableTime = 1.0;
     if ([[self call] isIncoming]) {
         [self.ringtonePlayback stop];
     }
-    
-    [self setCallUnhandled:NO];
-    [(AppController *)[NSApp delegate] updateDockTileBadgeLabel];
-    
     [[self call] answer];
 }
 
 - (void)hangUpCall {
     [self setCallActive:NO];
-    [self setCallUnhandled:NO];
-    
+
     if (_activeCallViewController != nil) {
         [[self activeCallViewController] stopCallTimer];
     }
@@ -235,8 +232,7 @@ static const NSTimeInterval kRedialButtonReenableTime = 1.0;
     [[[self incomingCallViewController] declineCallButton] setEnabled:NO];
     
     [self.musicPlayer resume];
-    [(AppController *)[NSApp delegate] updateDockTileBadgeLabel];
-    
+
     // Optionally close call window.
     if ([[NSUserDefaults standardUserDefaults] boolForKey:kAutoCloseCallWindow] &&
         ![self isKindOfClass:[CallTransferController class]]) {
@@ -250,8 +246,7 @@ static const NSTimeInterval kRedialButtonReenableTime = 1.0;
 - (void)redial {
     if (![[self userAgent] isStarted] ||
         ![[self accountController] isEnabled] ||
-        ![[[[self accountController] window] contentView] isEqual:
-          [[[self accountController] activeAccountViewController] view]] ||
+        ![[self accountController] canMakeCalls] ||
         [self redialURI] == nil) {
         
         return;
@@ -295,11 +290,6 @@ static const NSTimeInterval kRedialButtonReenableTime = 1.0;
             [self setStatus:NSLocalizedString(@"Call Failed", @"Call failed.")];
         }
     }];
-    
-    if ([self isCallUnhandled]) {
-        [self setCallUnhandled:NO];
-        [(AppController *)[NSApp delegate] updateDockTileBadgeLabel];
-    }
 }
 
 - (void)toggleCallHold {
@@ -416,9 +406,6 @@ static const NSTimeInterval kRedialButtonReenableTime = 1.0;
         [self.musicPlayer resume];
     }
     
-    [self setCallUnhandled:NO];
-    [(AppController *)[NSApp delegate] updateDockTileBadgeLabel];
-    
     [self.delegate callControllerWillClose:self];
 
     [_incomingCallViewController removeObservations];
@@ -464,7 +451,6 @@ static const NSTimeInterval kRedialButtonReenableTime = 1.0;
     
     if ([[notification object] isIncoming]) {
         [self.ringtonePlayback stop];
-        [(AppController *)[NSApp delegate] stopUserAttentionTimerIfNeeded];
     }
     
     NSString *preferredLocalization = [[NSBundle mainBundle] preferredLocalizations][0];

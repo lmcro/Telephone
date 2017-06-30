@@ -2,4 +2,4 @@
 
 CFBundleName				= "Телефон";
 CFBundleDisplayName			= "Телефон";
-NSHumanReadableCopyright	= "\U00A9 2016 64 Characters";
+NSContactsUsageDescription  = "Информация из контактов может быть использована для отображения имен и типов телефонных номеров, а также для автоматического дополнения номеров при вводе.";

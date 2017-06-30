@@ -2,8 +2,8 @@
 //  PurchaseReminderUseCaseTests.swift
 //  Telephone
 //
-//  Copyright (c) 2008-2016 Alexey Kuznetsov
-//  Copyright (c) 2016 64 Characters
+//  Copyright © 2008-2016 Alexey Kuznetsov
+//  Copyright © 2016-2017 64 Characters
 //
 //  Telephone is free software: you can redistribute it and/or modify
 //  it under the terms of the GNU General Public License as published by
@@ -27,7 +27,7 @@ final class PurchaseReminderUseCaseTests: XCTestCase {
         settings.version = "any"
         let output = PurchaseReminderUseCaseOutputSpy()
         let sut = PurchaseReminderUseCase(
-            accounts: DisabledSavedAccountsStub(),
+            accounts: DisabledAccountsStub(),
             receipt: InvalidReceipt(),
             settings: settings,
             now: Date(),
@@ -46,7 +46,7 @@ final class PurchaseReminderUseCaseTests: XCTestCase {
         settings.version = "any"
         let output = PurchaseReminderUseCaseOutputSpy()
         let sut = PurchaseReminderUseCase(
-            accounts: EnabledSavedAccountsStub(),
+            accounts: EnabledAccountsStub(),
             receipt: ValidReceipt(),
             settings: settings,
             now: Date(),
@@ -65,7 +65,7 @@ final class PurchaseReminderUseCaseTests: XCTestCase {
         settings.version = "any"
         let output = PurchaseReminderUseCaseOutputSpy()
         let sut = PurchaseReminderUseCase(
-            accounts: EnabledSavedAccountsStub(),
+            accounts: EnabledAccountsStub(),
             receipt: InvalidReceipt(),
             settings: settings,
             now: Date(),
@@ -85,7 +85,7 @@ final class PurchaseReminderUseCaseTests: XCTestCase {
         settings.version = "any"
         let output = PurchaseReminderUseCaseOutputSpy()
         let sut = PurchaseReminderUseCase(
-            accounts: EnabledSavedAccountsStub(),
+            accounts: EnabledAccountsStub(),
             receipt: InvalidReceipt(),
             settings: settings,
             now: now,
@@ -105,7 +105,7 @@ final class PurchaseReminderUseCaseTests: XCTestCase {
         settings.version = "any"
         let output = PurchaseReminderUseCaseOutputSpy()
         let sut = PurchaseReminderUseCase(
-            accounts: EnabledSavedAccountsStub(),
+            accounts: EnabledAccountsStub(),
             receipt: InvalidReceipt(),
             settings: settings,
             now: now,
@@ -125,7 +125,7 @@ final class PurchaseReminderUseCaseTests: XCTestCase {
         settings.version = "any"
         let output = PurchaseReminderUseCaseOutputSpy()
         let sut = PurchaseReminderUseCase(
-            accounts: EnabledSavedAccountsStub(),
+            accounts: EnabledAccountsStub(),
             receipt: InvalidReceipt(),
             settings: settings,
             now: now,
@@ -145,7 +145,7 @@ final class PurchaseReminderUseCaseTests: XCTestCase {
         settings.version = "any"
         let output = PurchaseReminderUseCaseOutputSpy()
         let sut = PurchaseReminderUseCase(
-            accounts: EnabledSavedAccountsStub(),
+            accounts: EnabledAccountsStub(),
             receipt: InvalidReceipt(),
             settings: settings,
             now: now,
@@ -165,7 +165,7 @@ final class PurchaseReminderUseCaseTests: XCTestCase {
         settings.version = "any"
         let output = PurchaseReminderUseCaseOutputSpy()
         let sut = PurchaseReminderUseCase(
-            accounts: EnabledSavedAccountsStub(),
+            accounts: EnabledAccountsStub(),
             receipt: InvalidReceipt(),
             settings: settings,
             now: now,
@@ -185,7 +185,7 @@ final class PurchaseReminderUseCaseTests: XCTestCase {
         settings.version = "old"
         let output = PurchaseReminderUseCaseOutputSpy()
         let sut = PurchaseReminderUseCase(
-            accounts: EnabledSavedAccountsStub(),
+            accounts: EnabledAccountsStub(),
             receipt: InvalidReceipt(),
             settings: settings,
             now: now,

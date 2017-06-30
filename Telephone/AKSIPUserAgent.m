@@ -2,8 +2,8 @@
 //  AKSIPUserAgent.m
 //  Telephone
 //
-//  Copyright (c) 2008-2016 Alexey Kuznetsov
-//  Copyright (c) 2016 64 Characters
+//  Copyright © 2008-2016 Alexey Kuznetsov
+//  Copyright © 2016-2017 64 Characters
 //
 //  Telephone is free software: you can redistribute it and/or modify
 //  it under the terms of the GNU General Public License as published by
@@ -17,6 +17,8 @@
 //
 
 #import "AKSIPUserAgent.h"
+
+@import UseCases;
 
 #import "AKNSString+PJSUA.h"
 #import "AKSIPAccount.h"
@@ -216,7 +218,7 @@ static const BOOL kAKSIPUserAgentDefaultUsesG711Only = NO;
     
     [self setRingbackSlot:kAKSIPUserAgentInvalidIdentifier];
 
-    _thread = [[NSThread alloc] initWithTarget:self selector:@selector(thread_main) object:nil];
+    _thread = [[WaitingThread alloc] init];
     _thread.qualityOfService = NSQualityOfServiceUserInitiated;
     [_thread start];
 
@@ -225,13 +227,6 @@ static const BOOL kAKSIPUserAgentDefaultUsesG711Only = NO;
 
 - (instancetype)init {
     return [self initWithDelegate:nil];
-}
-
-- (void)thread_main {
-    @autoreleasepool {
-        [[NSRunLoop currentRunLoop] addPort:[NSPort port] forMode:NSDefaultRunLoopMode];
-        [[NSRunLoop currentRunLoop] run];
-    }
 }
 
 - (void)start {
@@ -546,13 +541,13 @@ static const BOOL kAKSIPUserAgentDefaultUsesG711Only = NO;
         return NO;
     }
     
-    [anAccount setIdentifier:accountIdentifier];
+    [anAccount updateIdentifier:accountIdentifier];
     [anAccount setThread:self.thread];
     
     [[self accounts] addObject:anAccount];
     
     [anAccount setOnline:YES];
-    
+
     return YES;
 }
 
@@ -561,7 +556,7 @@ static const BOOL kAKSIPUserAgentDefaultUsesG711Only = NO;
         [anAccount identifier] == kAKSIPUserAgentInvalidIdentifier) {
         return NO;
     }
-    
+
     [anAccount.delegate SIPAccountWillRemove:anAccount];
     
     [anAccount removeAllCalls];
@@ -572,7 +567,7 @@ static const BOOL kAKSIPUserAgentDefaultUsesG711Only = NO;
     }
     
     [[self accounts] removeObject:anAccount];
-    [anAccount setIdentifier:kAKSIPUserAgentInvalidIdentifier];
+    [anAccount updateIdentifier:kAKSIPUserAgentInvalidIdentifier];
     
     return YES;
 }
