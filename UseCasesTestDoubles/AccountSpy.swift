@@ -3,7 +3,7 @@
 //  Telephone
 //
 //  Copyright © 2008-2016 Alexey Kuznetsov
-//  Copyright © 2016-2017 64 Characters
+//  Copyright © 2016-2020 64 Characters
 //
 //  Telephone is free software: you can redistribute it and/or modify
 //  it under the terms of the GNU General Public License as published by
@@ -22,15 +22,17 @@ public final class AccountSpy {
     public let uuid = ""
     public let domain = ""
 
-    public fileprivate(set) var didCallMakeCallTo = false
-    public fileprivate(set) var invokedURI: URI?
+    public private(set) var didCallMakeCall = false
+    public private(set) var invokedURI: URI?
+    public private(set) var invokedLabel: String?
 
     public init() {}
 }
 
 extension AccountSpy: Account {
-    public func makeCall(to uri: URI) {
-        didCallMakeCallTo = true
+    public func makeCall(to uri: URI, label: String) {
+        didCallMakeCall = true
         invokedURI = uri
+        invokedLabel = label
     }
 }

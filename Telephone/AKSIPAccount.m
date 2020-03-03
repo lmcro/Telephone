@@ -3,7 +3,7 @@
 //  Telephone
 //
 //  Copyright © 2008-2016 Alexey Kuznetsov
-//  Copyright © 2016-2017 64 Characters
+//  Copyright © 2016-2020 64 Characters
 //
 //  Telephone is free software: you can redistribute it and/or modify
 //  it under the terms of the GNU General Public License as published by
@@ -22,7 +22,7 @@
 #import "AKSIPURI.h"
 #import "AKSIPUserAgent.h"
 #import "AKSIPCall.h"
-
+#import "PJSUACallInfo.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -33,11 +33,11 @@ const NSInteger kAKSIPAccountDefaultReregistrationTime = 300;
 
 @property(nonatomic, readonly) AKSIPURI *destination;
 @property(nonatomic, readonly) pjsua_acc_id account;
-@property(nonatomic, readonly) void (^ _Nonnull completion)(BOOL, pjsua_call_id);
+@property(nonatomic, readonly) void (^ _Nonnull completion)(BOOL, PJSUACallInfo *);
 
 - (instancetype)initWithDestination:(AKSIPURI *)destination
                             account:(pjsua_acc_id)account
-                         completion:(void (^ _Nonnull)(BOOL, pjsua_call_id))completion;
+                         completion:(void (^ _Nonnull)(BOOL, PJSUACallInfo *))completion;
 
 @end
 
@@ -208,6 +208,17 @@ NS_ASSUME_NONNULL_END
     return [NSString stringWithPJString:accountInfo.online_status_text];
 }
 
+- (BOOL)hasUnansweredIncomingCalls {
+    for (AKSIPCall *call in self.calls) {
+        if (call.isActive &&
+            call.isIncoming &&
+            (call.state == kAKSIPCallIncomingState || call.state == kAKSIPCallEarlyState)) {
+            return YES;
+        }
+    }
+    return NO;
+}
+
 - (instancetype)initWithUUID:(NSString *)uuid
                     fullName:(NSString *)fullName
                   SIPAddress:(nullable NSString *)SIPAddress
@@ -259,14 +270,14 @@ NS_ASSUME_NONNULL_END
     self.identifier = identifier;
 }
 
-- (void)makeCallTo:(URI *)uri {
+- (void)makeCallTo:(URI *)uri label:(NSString *)label {
     NSLog(@"Not calling %@", uri);
 }
 
 - (void)makeCallTo:(AKSIPURI *)destination completion:(void (^ _Nonnull)(AKSIPCall * _Nullable))completion {
-    void (^onCallMakeCompletion)(BOOL, pjsua_call_id) = ^(BOOL success, pjsua_call_id callID) {
+    void (^onCallMakeCompletion)(BOOL, PJSUACallInfo *) = ^(BOOL success, PJSUACallInfo *call) {
         if (success) {
-            completion([self addCallWithIdentifier:callID]);
+            completion([self addCallWithInfo:call]);
         } else {
             NSLog(@"Error making call to %@ via account %@", destination, self);
             completion(nil);
@@ -283,13 +294,23 @@ NS_ASSUME_NONNULL_END
     pj_str_t uri = parameters.destination.description.pjString;
     pjsua_call_id callID = PJSUA_INVALID_ID;
     BOOL success = pjsua_call_make_call(parameters.account, &uri, 0, NULL, NULL, &callID) == PJ_SUCCESS;
-    dispatch_async(dispatch_get_main_queue(), ^{ parameters.completion(success, callID); });
+    PJSUACallInfo *infoWrapper = nil;
+    if (success) {
+        pjsua_call_info info;
+        success = pjsua_call_get_info(callID, &info) == PJ_SUCCESS;
+        if (success) {
+            infoWrapper = [[PJSUACallInfo alloc] initWithInfo:info];
+        }
+    }
+    dispatch_async(dispatch_get_main_queue(), ^{
+        parameters.completion(success, infoWrapper);
+    });
 }
 
-- (AKSIPCall *)addCallWithIdentifier:(NSInteger)identifier {
-    AKSIPCall *call = [self callWithIdentifier:identifier];
+- (AKSIPCall *)addCallWithInfo:(PJSUACallInfo *)info {
+    AKSIPCall *call = [self callWithIdentifier:info.identifier];
     if (!call) {
-        call = [[AKSIPCall alloc] initWithSIPAccount:self identifier:identifier];
+        call = [[AKSIPCall alloc] initWithSIPAccount:self info:info];
         [self.calls addObject:call];
     }
     return call;
@@ -312,13 +333,23 @@ NS_ASSUME_NONNULL_END
     [self.calls removeAllObjects];
 }
 
+- (NSInteger)activeCallsCount {
+    NSInteger count = 0;
+    for (AKSIPCall *call in self.calls) {
+        if (call.isActive) {
+            count++;
+        }
+    }
+    return count;
+}
+
 @end
 
 @implementation AKSIPCallParameters
 
 - (instancetype)initWithDestination:(AKSIPURI *)destination
                             account:(pjsua_acc_id)account
-                         completion:(void (^ _Nonnull)(BOOL, pjsua_call_id))completion {
+                         completion:(void (^ _Nonnull)(BOOL, PJSUACallInfo *))completion {
     if ((self = [super init])) {
         _destination = destination;
         _account = account;

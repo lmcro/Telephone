@@ -3,7 +3,7 @@
 //  Telephone
 //
 //  Copyright © 2008-2016 Alexey Kuznetsov
-//  Copyright © 2016-2017 64 Characters
+//  Copyright © 2016-2020 64 Characters
 //
 //  Telephone is free software: you can redistribute it and/or modify
 //  it under the terms of the GNU General Public License as published by
@@ -20,5 +20,5 @@
     var uuid: String { get }
     var domain: String { get }
 
-    func makeCall(to uri: URI)
+    func makeCall(to uri: URI, label: String)
 }

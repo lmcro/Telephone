@@ -3,7 +3,7 @@
 //  Telephone
 //
 //  Copyright © 2008-2016 Alexey Kuznetsov
-//  Copyright © 2016-2017 64 Characters
+//  Copyright © 2016-2020 64 Characters
 //
 //  Telephone is free software: you can redistribute it and/or modify
 //  it under the terms of the GNU General Public License as published by
@@ -17,13 +17,13 @@
 //
 
 public final class ServiceAddress: NSObject {
-    public let host: String
+    @objc public let host: String
     public let port: String
 
-    public init(string: String) {
+    @objc public init(string: String) {
         if let range = string.range(of: ":", options: .backwards) {
-            host = string.substring(to: range.lowerBound)
-            port = string.substring(from: range.upperBound)
+            host = String(string[..<range.lowerBound])
+            port = String(string[range.upperBound...])
         } else {
             host = string
             port = ""

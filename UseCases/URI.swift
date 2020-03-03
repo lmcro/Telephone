@@ -3,7 +3,7 @@
 //  Telephone
 //
 //  Copyright © 2008-2016 Alexey Kuznetsov
-//  Copyright © 2016-2017 64 Characters
+//  Copyright © 2016-2020 64 Characters
 //
 //  Telephone is free software: you can redistribute it and/or modify
 //  it under the terms of the GNU General Public License as published by
@@ -19,9 +19,9 @@
 import Foundation
 
 public final class URI: NSObject {
-    public let user: String
-    public let host: String
-    public let displayName: String
+    @objc public let user: String
+    @objc public let host: String
+    @objc public let displayName: String
 
     public init(user: String, host: String, displayName: String) {
         self.user = user
@@ -45,7 +45,11 @@ extension URI {
     }
 
     public override var hash: Int {
-        return user.hash ^ host.hash ^ displayName.hash
+        var hasher = Hasher()
+        hasher.combine(user)
+        hasher.combine(host)
+        hasher.combine(displayName)
+        return hasher.finalize()
     }
 
     private func isEqual(to uri: URI) -> Bool {

@@ -14,15 +14,22 @@
 //
 
 public final class CallHistoryCallMakeUseCase {
-    fileprivate let account: Account
+    private let account: Account
 
     public init(account: Account) {
         self.account = account
     }
 }
 
-extension CallHistoryCallMakeUseCase: CallHistoryRecordGetUseCaseOutput {
-    public func update(record: CallHistoryRecord) {
-        account.makeCall(to: record.uri)
+extension CallHistoryCallMakeUseCase: ContactCallHistoryRecordGetUseCaseOutput {
+    public func update(record: ContactCallHistoryRecord) {
+        account.makeCall(to: URI(record: record), label: label(for: record.contact.address))
+    }
+}
+
+private func label(for address: MatchedContact.Address) -> String {
+    switch address {
+    case let .phone(_, label), let .email(_, label):
+        return label
     }
 }

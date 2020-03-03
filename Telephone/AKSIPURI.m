@@ -3,7 +3,7 @@
 //  Telephone
 //
 //  Copyright © 2008-2016 Alexey Kuznetsov
-//  Copyright © 2016-2017 64 Characters
+//  Copyright © 2016-2020 64 Characters
 //
 //  Telephone is free software: you can redistribute it and/or modify
 //  it under the terms of the GNU General Public License as published by
@@ -98,10 +98,12 @@
         return nil;
     }
     
-    pjsip_name_addr *nameAddr;
-    nameAddr = (pjsip_name_addr *)pjsip_parse_uri([[AKSIPUserAgent sharedUserAgent] pool],
-                                                  (char *)[SIPURIString cStringUsingEncoding:NSUTF8StringEncoding],
-                                                  [SIPURIString length], PJSIP_PARSE_URI_AS_NAMEADDR);
+    pjsip_name_addr * __block nameAddr;
+    dispatch_sync(AKSIPUserAgent.sharedUserAgent.poolQueue, ^{
+        nameAddr = (pjsip_name_addr *)pjsip_parse_uri([[AKSIPUserAgent sharedUserAgent] poolResettingIfNeeded],
+                                                      (char *)[SIPURIString cStringUsingEncoding:NSUTF8StringEncoding],
+                                                      [SIPURIString length], PJSIP_PARSE_URI_AS_NAMEADDR);
+    });
     if (nameAddr == NULL) {
         return nil;
     }

@@ -3,7 +3,7 @@
 //  Telephone
 //
 //  Copyright © 2008-2016 Alexey Kuznetsov
-//  Copyright © 2016-2017 64 Characters
+//  Copyright © 2016-2020 64 Characters
 //
 //  Telephone is free software: you can redistribute it and/or modify
 //  it under the terms of the GNU General Public License as published by
@@ -23,6 +23,7 @@
 
 #import "AKSIPAccountDelegate.h"
 
+@class PJSUACallInfo;
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -83,6 +84,11 @@ extern const NSInteger kAKSIPAccountDefaultReregistrationTime;
 /// address as the one in the REGISTER request.
 @property(nonatomic) BOOL updatesViaHeader;
 
+/// A Boolean value indicating if IP address in SDP should be automatically updated.
+///
+/// When YES, and when STUN and ICE are disabled, then the IP address found in registration response will be used.
+@property(nonatomic) BOOL updatesSDP;
+
 // The receiver's identifier at the user agent.
 @property(nonatomic, readonly) NSInteger identifier;
 
@@ -108,6 +114,8 @@ extern const NSInteger kAKSIPAccountDefaultReregistrationTime;
 // Presence online status text.
 @property(nonatomic, readonly) NSString *onlineStatusText;
 
+@property(nonatomic, readonly) BOOL hasUnansweredIncomingCalls;
+
 @property(nonatomic) NSThread *thread;
 
 - (instancetype)initWithUUID:(NSString *)uuid
@@ -124,10 +132,11 @@ extern const NSInteger kAKSIPAccountDefaultReregistrationTime;
 // Makes a call to a given destination URI.
 - (void)makeCallTo:(AKSIPURI *)destination completion:(void (^)(AKSIPCall *))completion;
 
-- (AKSIPCall *)addCallWithIdentifier:(NSInteger)identifier;
+- (AKSIPCall *)addCallWithInfo:(PJSUACallInfo *)info;
 - (nullable AKSIPCall *)callWithIdentifier:(NSInteger)identifier;
 - (void)removeCall:(AKSIPCall *)call;
 - (void)removeAllCalls;
+- (NSInteger)activeCallsCount;
 
 @end
 

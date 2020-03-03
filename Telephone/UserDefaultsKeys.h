@@ -3,7 +3,7 @@
 //  Telephone
 //
 //  Copyright © 2008-2016 Alexey Kuznetsov
-//  Copyright © 2016-2017 64 Characters
+//  Copyright © 2016-2020 64 Characters
 //
 //  Telephone is free software: you can redistribute it and/or modify
 //  it under the terms of the GNU General Public License as published by
@@ -35,9 +35,11 @@ extern NSString * const kOutboundProxyHost;
 extern NSString * const kOutboundProxyPort;
 extern NSString * const kUseICE;
 extern NSString * const kUseDNSSRV;
+extern NSString * const kUseQoS;
 extern NSString * const kSignificantPhoneNumberLength;
 extern NSString * const kAutoCloseCallWindow;
 extern NSString * const kAutoCloseMissedCallWindow;
+extern NSString * const kKeepCallWindowOnTop;
 extern NSString * const kCallWaiting;
 extern NSString * const kUseG711Only;
 extern NSString * const kSettingsVersion;
@@ -61,3 +63,5 @@ extern NSString * const kProxyHost;
 extern NSString * const kProxyPort;
 extern NSString * const kUpdateContactHeader;
 extern NSString * const kUpdateViaHeader;
+extern NSString * const kUpdateSDP;
+extern NSString * const kLockCodec;
